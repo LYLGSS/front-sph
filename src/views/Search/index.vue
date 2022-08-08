@@ -1,14 +1,12 @@
 <template>
   <div>
-    <h2>Search 路由组件 -- {{ keyword }}</h2>
-    <h2>Search 路由组件 -- {{ $route.query.k }}</h2>
+    <h2>Search 路由组件</h2>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'MyHome',
-  props: ['keyword']
+  name: 'MyHome'
 }
 </script>
 
