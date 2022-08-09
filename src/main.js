@@ -5,6 +5,8 @@ import router from './router'
 import TypeNav from '@/components/TypeNav/index.vue'
 // Vuex 仓库
 import store from '@/store/index'
+// 引入 mockServer.js (mock 数据流)
+import '@/mock/mockServer.js'
 
 Vue.config.productionTip = false
 Vue.component(TypeNav.name, TypeNav)

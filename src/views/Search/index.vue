@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>Search 路由组件</h2>
+    <TypeNav></TypeNav>
   </div>
 </template>
 

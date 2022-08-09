@@ -15,6 +15,10 @@ export default {
   components: {
     Header,
     Footer
+  },
+  created() {
+    // 通知 Vuex 发 ajax 请求，获取数据，存储在仓库中
+    this.$store.dispatch('home/categroyList')
   }
 }
 </script>

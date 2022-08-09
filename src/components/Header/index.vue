@@ -51,7 +51,12 @@ export default {
   },
   methods: {
     toSearch() {
-      this.$router.push({ name: 'search', params: { keyword: this.keyword || undefined }, query: { k: this.keyword.toUpperCase() } })
+      const location = { name: 'search', params: { keyword: this.keyword || undefined } }
+      // 若有 query 参数，则进行合并
+      if (this.$route.query) {
+        location.query = this.$route.query
+      }
+      this.$router.push(location)
       this.keyword = ''
     }
   }

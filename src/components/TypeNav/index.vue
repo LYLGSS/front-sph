@@ -2,33 +2,36 @@
   <!-- 商品分类导航 -->
   <div class="type-nav">
     <div class="container">
-      <div @mouseleave="leaveIndex">
+      <div @mouseleave="leaveIndex" @mouseenter="enterShow">
         <h2 class="all">全部商品分类</h2>
         <!-- 三级联动 -->
-        <div class="sort">
-          <div class="all-sort-list2" @click.prevent="goSearch">
-            <div class="item" v-for="(c1, index) in categroyList" :key="c1.categoryId" @mouseenter="changeIndex(index)" :class="{ cur: currentIndex === index }">
-              <h3>
-                <a href="#" :data-categoryName="c1.categoryName" :data-category1Id="c1.categoryId">{{ c1.categoryName }}</a>
-              </h3>
-              <!-- 二级、三级分类 -->
-              <div class="item-list clearfix" :style="{ display: currentIndex === index ? 'block' : 'none' }">
-                <div class="subitem" v-for="c2 in c1.categoryChild" :key="c2.categoryId">
-                  <dl class="fore">
-                    <dt>
-                      <a href="#" :data-categoryName="c2.categoryName" :data-category2Id="c2.categoryId">{{ c2.categoryName }}</a>
-                    </dt>
-                    <dd>
-                      <em v-for="c3 in c2.categoryChild" :key="c3.categoryId">
-                        <a href="#" :data-categoryName="c3.categoryName" :data-category3Id="c3.categoryId">{{ c3.categoryName }}</a>
-                      </em>
-                    </dd>
-                  </dl>
+        <transition name="sort">
+          <div class="sort" v-show="show">
+            <div class="all-sort-list2" @click.prevent="goSearch">
+              <div class="item" v-for="(c1, index) in categroyList" :key="c1.categoryId" @mouseenter="changeIndex(index)" :class="{ cur: currentIndex === index }">
+                <h3>
+                  <a href="#" :data-categoryName="c1.categoryName" :data-category1Id="c1.categoryId">{{ c1.categoryName }}</a>
+                </h3>
+                <!-- 二级、三级分类 -->
+                <div class="item-list clearfix" :style="{ display: currentIndex === index ? 'block' : 'none' }">
+                  <div class="subitem" v-for="c2 in c1.categoryChild" :key="c2.categoryId">
+                    <dl class="fore">
+                      <dt>
+                        <a href="#" :data-categoryName="c2.categoryName" :data-category2Id="c2.categoryId">{{ c2.categoryName }}</a>
+                      </dt>
+                      <dd>
+                        <em v-for="c3 in c2.categoryChild" :key="c3.categoryId">
+                          <a href="#" :data-categoryName="c3.categoryName" :data-category3Id="c3.categoryId">{{ c3.categoryName }}</a>
+                        </em>
+                      </dd>
+                    </dl>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </transition>
+
       </div>
       <nav class="nav">
         <a href="###">服装城</a>
@@ -53,12 +56,17 @@ export default {
   name: 'TypeNav',
   data() {
     return {
-      currentIndex: -1
+      currentIndex: -1,
+      show: true
     }
   },
-  created() {
-    // 通知 Vuex 发 ajax 请求，获取数据，存储在仓库中
-    this.$store.dispatch('home/categroyList')
+  beforeMount() {
+    // 组件挂载之前，如果不是 Home 组件，就将 TypeNav 隐藏
+    // 注意：若此时将生命周期函数写成 mounted，则会出现点击一级菜单中的 a 标签时，跳转到 Search 组件后，一级菜单出现频闪
+    // 原因是：在 TypeNav 组件挂载完成后再将一级菜单进行隐藏，由于对一级菜单设置了出场动画，鼠标在一级菜单上频繁移入与移出，导致一级菜单在隐藏与显示中频繁切换，所以会出现频闪现象
+    if (this.$route.path !== '/home') {
+      this.show = false
+    }
   },
   computed: {
     ...mapState('home', ['categroyList'])
@@ -75,8 +83,20 @@ export default {
       this.currentIndex = index
     }, 50),
 
+    // 当鼠标移入的时候，让商品分类列表进行隐藏
+    enterShow() {
+      if (this.$route.path !== '/home') {
+        this.show = true
+      }
+    },
+
+    // 在 Search 组件中当鼠标离开 “全部商品分类” 的时候，让商品分类列表进行隐藏
     leaveIndex() {
       this.currentIndex = -1
+      // 判断如果是 Search 路由组件的时候才会执行
+      if (this.$route.path !== '/home') {
+        this.show = false
+      }
     },
 
     goSearch(event) {
@@ -95,6 +115,10 @@ export default {
         }
         // 整合参数
         const goal = { ...location, query }
+        // 若有 params 参数，则进行合并
+        if (this.$route.params) {
+          goal.params = this.$route.params
+        }
         // 路由跳转并传递参数
         this.$router.push(goal)
       }
@@ -216,6 +240,29 @@ export default {
         .cur {
           background-color: rgb(217,217,217);
         }
+      }
+    }
+
+    // 进入的起点、离开的终点
+    .sort-enter,.sort-leave-to{
+      height: 0px;
+    }
+    // 进入的终点、离开的起点
+    .sort-enter-to,.sort-leave{
+      height: 461px;
+    }
+    // 启用动画
+    .sort-enter-active{
+      animation: showList .3s linear;
+      overflow: hidden;
+    }
+    // 动画
+    @keyframes showList {
+      from{
+        height: 0px;
+      }
+      to{
+        height: 416px;
       }
     }
   }
