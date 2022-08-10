@@ -7,8 +7,7 @@
     <Rank />
     <Like />
     <!-- Floor这个组件：自己在组件内部是没有发请求的，数据是父组件给的 -->
-    <Floor />
-    <Floor />
+    <Floor v-for="floor in floorList" :key="floor.id" :list="floor"/>
     <Brand />
   </div>
 </template>
@@ -20,6 +19,7 @@ import Rank from './Rank/index.vue'
 import Like from './Like/index.vue'
 import Brand from './Brand/index.vue'
 import Floor from './Floor/index.vue'
+import { mapState } from 'vuex'
 
 export default {
   name: 'Home',
@@ -30,6 +30,12 @@ export default {
     Like,
     Brand,
     Floor
+  },
+  created() {
+    this.$store.dispatch('home/getFloorList')
+  },
+  computed: {
+    ...mapState('home', ['floorList'])
   }
 }
 </script>
