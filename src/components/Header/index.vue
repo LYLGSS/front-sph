@@ -49,6 +49,12 @@ export default {
       keyword: ''
     }
   },
+  created() {
+    // 通过全局事件总线清除关键字
+    this.$bus.$on('clearKeyword', () => {
+      this.keyword = ''
+    })
+  },
   methods: {
     toSearch() {
       const location = { name: 'search', params: { keyword: this.keyword || undefined } }
@@ -57,7 +63,6 @@ export default {
         location.query = this.$route.query
       }
       this.$router.push(location)
-      this.keyword = ''
     }
   }
 }

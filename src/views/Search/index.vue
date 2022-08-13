@@ -12,15 +12,19 @@
             </li>
           </ul>
           <ul class="fl sui-tag">
-            <li class="with-x">手机</li>
-            <li class="with-x">iphone<i>×</i></li>
-            <li class="with-x">华为<i>×</i></li>
-            <li class="with-x">OPPO<i>×</i></li>
+            <!-- 分类的面包屑 -->
+            <li class="with-x" v-if="searchParams.categoryName">{{ searchParams.categoryName }}<i @click="removeCategoryName">×</i></li>
+            <!-- 关键字的面包屑 -->
+            <li class="with-x" v-if="searchParams.keyword">{{ searchParams.keyword }}<i @click="removeKeyword">×</i></li>
+            <!-- 品牌的面包屑 -->
+            <li class="with-x" v-if="searchParams.trademark">{{ searchParams.trademark.split(':')[1] }}<i @click="removeTrademark">×</i></li>
+            <!-- 商品属性的面包屑 -->
+            <li class="with-x" v-for="(attrValue, index) in searchParams.props" :key="index">{{ attrValue.split(':')[1] }}<i @click="removeAttr(index)">×</i></li>
           </ul>
         </div>
 
         <!--selector-->
-        <SearchSelector />
+        <SearchSelector @trademarkInfo="trademarkInfo" @attrInfo="attrInfo" />
 
         <!--details-->
         <div class="details clearfix">
@@ -64,7 +68,7 @@
                     </strong>
                   </div>
                   <div class="attr">
-                    <a target="_blank" href="item.html" title="促销信息，下单即赠送三个月CIBN视频会员卡！【小米电视新品4A 58 火爆预约中】">{{ good.title }}</a>
+                    <a target="_blank" href="item.html" title="促销信息，下单即赠送三个月CIBN视频会员卡！【小米电视新品4A 58 火爆预约中】" v-html="good.title"></a>
                   </div>
                   <div class="commit">
                     <i class="command">已有<span>2000</span>人评价</i>
@@ -162,6 +166,64 @@ export default {
     // 向服务器发请求获取 search 模块数据（根据参数不同返回不同的数据进行展示）
     getData() {
       this.$store.dispatch('search/getSearchList', this.searchParams)
+    },
+    // 删除分类的名字
+    removeCategoryName() {
+      // 把带给服务器的单数置空，再向服务器发起请求
+      // 带给服务器的参数可有可无：如果属性为空的字符串，还是会把相应的字段带给服务器
+      // 此处吧相应的字段重置为 undefined ,则这个字段不对带给服务器，减轻了服务器的压力
+      this.searchParams.categoryName = undefined
+
+      // this.searchParams.category1Id = undefined
+      // this.searchParams.category2Id = undefined
+      // this.searchParams.category3Id = undefined
+      // this.getData()
+
+      // 路由地址栏要清空
+      // 删除 query ，如果路径中出现 params 则不应该删除，路由跳转的时候应该带上
+      // this.$route.params 若没有，则为空对象{}，if条件也会成立，因此不用判断
+      this.$router.push({ name: 'search', params: this.$route.params })
+    },
+    // 删除关键字
+    removeKeyword() {
+      // 给服务器带的参数 searchParams 的 keyword 置空
+      this.searchParams.keyword = undefined
+      // 通知兄弟组件 Header 清除关键字
+      this.$bus.$emit('clearKeyword')
+      // 通过路由跳转，获取新数据，从而刷新界面
+      this.$router.push({ name: 'search', query: this.$route.query })
+    },
+    // 自定义事件的回调
+    trademarkInfo(trademark) {
+      // 整理参数格式为 "ID:品牌名称"
+      this.searchParams.trademark = `${trademark.tmId}:${trademark.tmName}`
+      this.getData()
+    },
+    // 删除品牌的信息
+    removeTrademark() {
+      this.searchParams.trademark = undefined
+      this.getData()
+    },
+    // 商品属性的回调函数（自定义事件）
+    attrInfo(attr, attrValue) {
+      // 传递参数的格式：["属性ID:属性值:属性名"]  示例: ["2:8G:运行内存"]
+      // 整理参数
+      const props = `${attr.attrId}:${attrValue}:${attr.attrName}`
+
+      // 若 searchParams.props数组中包含此 props，则不在发请求
+      if (this.searchParams.props.includes(props)) return
+
+      // searchParams.props数组中不包含此 props，则添加进去
+      this.searchParams.props.push(props)
+      // 再次发请求
+      this.getData()
+    },
+    // 删除商品的属性
+    removeAttr(index) {
+      // 再次整理参数
+      this.searchParams.props.splice(index, 1)
+      // 再次发起请求
+      this.getData()
     }
   },
   watch: {
@@ -169,9 +231,9 @@ export default {
     $route() {
       // 每一次请求之前，应该把相应的1、2、3级分类的id置空，让他接收新的1、2、3级分类的id
       // 分类名与关键字不用清理：因为每一次路由发生变化的时候，都会给它赋予新的值
-      this.searchParams.category1Id = ''
-      this.searchParams.category2Id = ''
-      this.searchParams.category3Id = ''
+      this.searchParams.category1Id = undefined
+      this.searchParams.category2Id = undefined
+      this.searchParams.category3Id = undefined
       // 再次发请求之前整理带给服务器的参数
       Object.assign(this.searchParams, this.$route.query, this.$route.params)
       // 再次发起 ajax 请求

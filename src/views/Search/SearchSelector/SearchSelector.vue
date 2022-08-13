@@ -3,8 +3,9 @@
     <div class="type-wrap logo">
       <div class="fl key brand">品牌</div>
       <div class="value logos">
+        <!-- 品牌 -->
         <ul class="logo-list">
-          <li v-for="trademark in trademarkList" :key="trademark.tmId">{{ trademark.tmName }}</li>
+          <li v-for="trademark in trademarkList" :key="trademark.tmId" @click="tradeMarkHandler(trademark)">{{ trademark.tmName }}</li>
         </ul>
       </div>
       <div class="ext">
@@ -12,11 +13,14 @@
         <a href="javascript:void(0);">更多</a>
       </div>
     </div>
+    <!-- 平台售卖属性 -->
     <div class="type-wrap" v-for="attr in attrsList" :key="attr.attrId">
+      <!-- 售卖属性：比如颜色 -->
       <div class="fl key">{{ attr.attrName }}</div>
       <div class="fl value">
         <ul class="type-list">
-          <li v-for="(attrValue, index) in attr.attrValueList" :key="index">
+          <!-- 售卖属性的属性值：粉色、蓝色、黑色... -->
+          <li v-for="(attrValue, index) in attr.attrValueList" :key="index" @click="attrInfo(attr, attrValue)">
             <a>{{ attrValue }}</a>
           </li>
         </ul>
@@ -32,6 +36,17 @@ export default {
   name: 'SearchSelector',
   computed: {
     ...mapGetters('search', ['trademarkList', 'attrsList'])
+  },
+  methods: {
+    // 品牌的事件处理函数
+    tradeMarkHandler(trademark) {
+      // 将点击的品牌信息传递给 Search 父组件，在父组件中向服务器发起请求--自定义事件
+      this.$emit('trademarkInfo', trademark)
+    },
+    // 平台售卖属性值的点击事件
+    attrInfo(attr, attrValue) {
+      this.$emit('attrInfo', attr, attrValue)
+    }
   }
 }
 </script>
@@ -91,6 +106,7 @@ export default {
           color: #e1251b;
           font-style: italic;
           font-size: 14px;
+          cursor: pointer;
 
           img {
             max-width: 100%;
@@ -105,6 +121,7 @@ export default {
           display: block;
           margin-right: 30px;
           line-height: 26px;
+          cursor: pointer;
 
           a {
             text-decoration: none;

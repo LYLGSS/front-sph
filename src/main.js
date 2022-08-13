@@ -19,5 +19,9 @@ Vue.component(Carousel.name, Carousel)
 new Vue({
   router,
   store,
+  // 全局事件总线 $bus 配置
+  beforeCreate() {
+    Vue.prototype.$bus = this
+  },
   render: h => h(App)
 }).$mount('#app')
