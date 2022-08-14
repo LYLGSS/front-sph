@@ -15,6 +15,8 @@ module.exports = {
     // 关闭组件的驼峰命名规则
     'vue/multi-word-component-names': 0,
     // 关闭未使用过的变量的检测
-    'no-unused-vars': 'off'
+    'no-unused-vars': 'off',
+    // 关闭强制使用 === 和 !==
+    eqeqeq: 0
   }
 }

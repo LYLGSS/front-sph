@@ -32,23 +32,11 @@
             <div class="navbar-inner filter">
               <!-- “综合” 导航栏结构 -->
               <ul class="sui-nav">
-                <li class="active">
-                  <a href="#">综合</a>
+                <li :class="{ active: isOne }" @click="changeOrder(1)">
+                  <a>综合<span v-show="isOne" class="iconfont" :class="isDesc"></span></a>
                 </li>
-                <li>
-                  <a href="#">销量</a>
-                </li>
-                <li>
-                  <a href="#">新品</a>
-                </li>
-                <li>
-                  <a href="#">评价</a>
-                </li>
-                <li>
-                  <a href="#">价格⬆</a>
-                </li>
-                <li>
-                  <a href="#">价格⬇</a>
+                <li :class="{ active: isTwo }" @click="changeOrder(2)">
+                  <a>价格<span v-show="isTwo" class="iconfont" :class="isDesc"></span></a>
                 </li>
               </ul>
             </div>
@@ -82,35 +70,7 @@
             </ul>
           </div>
           <!-- 分页器 -->
-          <div class="fr page">
-            <div class="sui-pagination clearfix">
-              <ul>
-                <li class="prev disabled">
-                  <a href="#">«上一页</a>
-                </li>
-                <li class="active">
-                  <a href="#">1</a>
-                </li>
-                <li>
-                  <a href="#">2</a>
-                </li>
-                <li>
-                  <a href="#">3</a>
-                </li>
-                <li>
-                  <a href="#">4</a>
-                </li>
-                <li>
-                  <a href="#">5</a>
-                </li>
-                <li class="dotted"><span>...</span></li>
-                <li class="next">
-                  <a href="#">下一页»</a>
-                </li>
-              </ul>
-              <div><span>共10页&nbsp;</span></div>
-            </div>
-          </div>
+          <Pagination :pageNo="searchParams.pageNo" :pageSize="searchParams.pageSize" :total="total" :continues="5" @getPageNo="getPageNo"></Pagination>
         </div>
       </div>
     </div>
@@ -141,7 +101,7 @@ export default {
         // 第几页
         pageNo: 1,
         // 每一页展示条数
-        pageSize: 10,
+        pageSize: 3,
         // 平台属性的操作
         props: [],
         // 品牌
@@ -160,7 +120,17 @@ export default {
     this.getData()
   },
   computed: {
-    ...mapGetters('search', ['goodsList'])
+    ...mapGetters('search', ['goodsList', 'total']),
+    isOne() {
+      return this.searchParams.order.includes('1')
+    },
+    isTwo() {
+      return this.searchParams.order.includes('2')
+    },
+    // 判断是否是desc降序排列，返回上下箭头的类名
+    isDesc() {
+      return this.searchParams.order.includes('desc') ? 'icon-arrowdown' : 'icon-arrowup'
+    }
   },
   methods: {
     // 向服务器发请求获取 search 模块数据（根据参数不同返回不同的数据进行展示）
@@ -222,6 +192,34 @@ export default {
     removeAttr(index) {
       // 再次整理参数
       this.searchParams.props.splice(index, 1)
+      // 再次发起请求
+      this.getData()
+    },
+    // 排序操作
+    changeOrder(flag) {
+      // flag 形参：它是一个标记，代表用户点击的是综合（1）或者价格（2）【用户点击的时候传过来的】
+      const originOrder = this.searchParams.order
+      // 获取最开始的状态
+      const originFlag = originOrder.split(':')[0]
+      const originSort = originOrder.split(':')[1]
+      // 准备一个新的 order 属性值
+      let newOrder = ''
+      // 点击的是已经展示的排序操作（已经变红的标签，即重复点击一个li标签）
+      if (flag == originFlag) {
+        newOrder = `${originFlag}:${originSort === 'desc' ? 'asc' : 'desc'}`
+      } else {
+        // 点击的是另一个标签
+        newOrder = `${flag}:${'desc'}`
+      }
+      // 将新的 order 赋予 searchParams
+      this.searchParams.order = newOrder
+      // 再次发起请求
+      this.getData()
+    },
+    // 自定义事件的回调函数
+    getPageNo(pageNo) {
+      // 整理带给服务器的参数
+      this.searchParams.pageNo = pageNo
       // 再次发起请求
       this.getData()
     }
