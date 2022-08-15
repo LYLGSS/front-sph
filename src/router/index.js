@@ -1,9 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '@/views/Home/index.vue'
-import Login from '@/views/Login/index.vue'
-import Register from '@/views/Register/index.vue'
-import Search from '@/views/Search/index.vue'
+// 引入路由的配置模块
+import routes from '@/router/routes.js'
 
 Vue.use(VueRouter)
 
@@ -43,36 +41,13 @@ VueRouter.prototype.replace = (location, resolve, reject) => {
   }
 }
 
-const routes = [
-  {
-    path: '/',
-    redirect: '/home'
-  },
-  {
-    path: '/home',
-    component: Home,
-    meta: { showFooter: true }
-  },
-  {
-    name: 'search',
-    path: '/search/:keyword?',
-    component: Search,
-    meta: { showFooter: true }
-  },
-  {
-    path: '/login',
-    component: Login,
-    meta: { showFooter: false }
-  },
-  {
-    path: '/register',
-    component: Register,
-    meta: { showFooter: false }
-  }
-]
-
 const router = new VueRouter({
-  routes
+  routes,
+  // 路由跳转后滚动条的滚动行为
+  scrollBehavior(to, from, savedPosition) {
+    // 始终滚动到顶部
+    return { y: 0 }
+  }
 })
 
 export default router
