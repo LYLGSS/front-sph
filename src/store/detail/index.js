@@ -1,4 +1,4 @@
-import { reqGoodsInfo } from '@/api'
+import { reqAddOrUpdateShopCart, reqGoodsInfo } from '@/api'
 
 const state = {
   goodInfo: {}
@@ -10,6 +10,11 @@ const actions = {
     if (res.code === 200) {
       context.commit('GETGOODINFO', res.data)
     }
+  },
+  // 将产品添加到购物车中
+  async addOrUpdateShopCart(context, { skuId, skuNum }) {
+    // 此处服务器只返回了成功还是失败，并没有返回可用的数据，因此不用 commit，也不用存储该请求返回的数据
+    const res = await reqAddOrUpdateShopCart(skuId, skuNum)
   }
 }
 const mutations = {

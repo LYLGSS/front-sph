@@ -71,12 +71,13 @@
             </div>
             <div class="cartWrap">
               <div class="controls">
-                <input autocomplete="off" class="itxt" />
-                <a href="javascript:" class="plus">+</a>
-                <a href="javascript:" class="mins">-</a>
+                <input autocomplete="off" class="itxt" v-model="skuNum" @change="changeSkuNum" />
+                <a href="javascript:;" class="plus" @click="skuNum++">+</a>
+                <a href="javascript:;" class="mins" @click="skuNum > 1 ? skuNum-- : (skuNum = 1)">-</a>
               </div>
               <div class="add">
-                <a href="javascript:">加入购物车</a>
+                <!-- 以前的路由舔跳转：从 A 路由 跳转到 B 路由，这里在加入购物车，进行路由跳转之前，需要发请求把加入购物车的商品信息通过请求的形式通知服务器，服务器进行存储 -->
+                <a href="javascript:" @click="addShopcar">加入购物车</a>
               </div>
             </div>
           </div>
@@ -321,7 +322,12 @@ import Zoom from './Zoom/Zoom'
 
 export default {
   name: 'Detail',
-
+  data() {
+    return {
+      // 购买产品个数
+      skuNum: 1
+    }
+  },
   components: {
     ImageList,
     Zoom
@@ -343,6 +349,22 @@ export default {
       })
       // 点击的那个属性值设置高亮
       clickedSaleAttrValue.isChecked = 1
+    },
+    // 表单元素修改产品个数
+    changeSkuNum(event) {
+      // 用户输入进来的文本 * 1【利用此方法来检测用户输入是否非法】
+      const value = event.target.value * 1
+      // 如果用户输入进来的文本非法，出现 NaN 或者小于 1
+      if (isNaN(value) || value < 1) {
+        this.skuNum = 1
+      } else {
+        // 输入正常：大于1，但不能出现小数
+        this.skuNum = parseInt(value)
+      }
+    },
+    // 加入购物车的回调函数
+    addShopcar() {
+      this.$store.dispatch('detail/addOrUpdateShopCart', { skuId: this.$route.params.goodId, skuNum: this.skuNum })
     }
   }
 }

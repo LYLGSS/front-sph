@@ -25,5 +25,9 @@ export const reqGetFloorList = () => mockRequest.get('/floor')
 // 当前这个接口（获取搜索模块的数据），给服务器传递一个默认参数【至少是一个空对象，否则请求失败】
 export const reqGetSearchInfo = (params) => $http({ url: '/list', method: 'post', data: params })
 
-// 获取产品详情信息的接口 URL: /api/item/{goodId}  请求方式：get
-export const reqGoodsInfo = (goodId) => $http({ url: `/item/${goodId}`, method: 'get' })
+// 获取产品详情信息的接口 URL: /api/item/{skuId}  请求方式：get
+export const reqGoodsInfo = (skuId) => $http({ url: `/item/${skuId}`, method: 'get' })
+
+// 将产品添加到购物车中（或者更新某一个产品的个数）
+// 请求地址：/api/cart/addToCart/{ skuId }/{ skuNum }     请求方式：post
+export const reqAddOrUpdateShopCart = (skuId, skuNum) => $http({ url: `/cart/addToCart/${skuId}/${skuNum}`, method: 'post' })
