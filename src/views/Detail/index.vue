@@ -61,6 +61,7 @@
             </div>
           </div>
 
+          <!-- 用户选择购买的商品属性 -->
           <div class="choose">
             <div class="chooseArea">
               <div class="choosed"></div>
@@ -363,8 +364,23 @@ export default {
       }
     },
     // 加入购物车的回调函数
-    addShopcar() {
-      this.$store.dispatch('detail/addOrUpdateShopCart', { skuId: this.$route.params.goodId, skuNum: this.skuNum })
+    async addShopcar() {
+      // 此处需要知道请求是否成功，成功的话需要进行路由跳转，失败的话需要提示用户
+      try {
+        // 成功
+        const res = await this.$store.dispatch('detail/addOrUpdateShopCart', { skuId: this.$route.params.goodId, skuNum: this.skuNum })
+        // 路由跳转
+        // 在进行路由跳转的时候，还需要将商品的信息带给下一级的路由组件
+        // 一些简单的数据 skuNum ,通过 query 形式给路由组件传递过去
+        // 产品信息的数据比较复杂【skuInfo】，通过浏览器的会话存储 sessionStorage 进行存储（不持久化，浏览器关闭数据就消失）
+        // 本地存储|会话存储，一般存储的是字符串
+        this.$router.push({ name: 'addcartsuccess', query: { skuNum: this.skuNum } })
+        sessionStorage.setItem('SKUINFO', JSON.stringify(this.skuInfo))
+        sessionStorage.setItem('SKUATTR', JSON.stringify(this.spuSaleAttrList))
+      } catch (err) {
+        // 失败
+        alert(err.message)
+      }
     }
   }
 }

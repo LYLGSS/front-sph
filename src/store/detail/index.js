@@ -1,7 +1,11 @@
 import { reqAddOrUpdateShopCart, reqGoodsInfo } from '@/api'
+// 引入游客身份模块 uuid ---> 生成一个随机字符串（存储在本地localStorage，不可改变）
+import { getUUID } from '@/utils/uuid_token.js'
 
 const state = {
-  goodInfo: {}
+  goodInfo: {},
+  // 游客临时身份
+  uuid_token: getUUID()
 }
 const actions = {
   // 获取产品信息的 action
@@ -14,7 +18,15 @@ const actions = {
   // 将产品添加到购物车中
   async addOrUpdateShopCart(context, { skuId, skuNum }) {
     // 此处服务器只返回了成功还是失败，并没有返回可用的数据，因此不用 commit，也不用存储该请求返回的数据
+    // 注意：async 函数执行返回的结果一定是一个 promise【要么成功，要么失败】
     const res = await reqAddOrUpdateShopCart(skuId, skuNum)
+    if (res.code === 200) {
+      // 返回成功的标记
+      return 'ok'
+    } else {
+      // 返回失败的标记
+      return Promise.reject(new Error('falie'))
+    }
   }
 }
 const mutations = {

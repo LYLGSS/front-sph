@@ -17,6 +17,8 @@ module.exports = {
     // 关闭未使用过的变量的检测
     'no-unused-vars': 'off',
     // 关闭强制使用 === 和 !==
-    eqeqeq: 0
+    eqeqeq: 0,
+    // 关闭强制使用驼峰命名法
+    camelcase: 0
   }
 }

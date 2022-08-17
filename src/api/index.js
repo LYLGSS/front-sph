@@ -31,3 +31,7 @@ export const reqGoodsInfo = (skuId) => $http({ url: `/item/${skuId}`, method: 'g
 // 将产品添加到购物车中（或者更新某一个产品的个数）
 // 请求地址：/api/cart/addToCart/{ skuId }/{ skuNum }     请求方式：post
 export const reqAddOrUpdateShopCart = (skuId, skuNum) => $http({ url: `/cart/addToCart/${skuId}/${skuNum}`, method: 'post' })
+
+// 获取购物车列表数据
+// URL：/api/cart/cartList      请求方式：get
+export const reqCartList = () => $http({ url: '/cart/cartList', method: 'get' })
