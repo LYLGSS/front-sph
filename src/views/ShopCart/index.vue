@@ -13,7 +13,7 @@
       <div class="cart-body">
         <ul class="cart-list" v-for="cart in cartInfoList" :key="cart.id">
           <li class="cart-list-con1">
-            <input type="checkbox" name="chk_list" :checked="cart.isChecked === 1" />
+            <input type="checkbox" name="chk_list" :checked="cart.isChecked === 1" @change="updateChecked(cart.skuId, $event.target.checked)" />
           </li>
           <li class="cart-list-con2">
             <img :src="cart.imgUrl" />
@@ -31,7 +31,7 @@
             <span class="sum">{{ cart.skuNum * cart.skuPrice }}</span>
           </li>
           <li class="cart-list-con7">
-            <a href="#none" class="sindelet">删除</a>
+            <a href="javascript:void(0)" class="sindelet" @click="deleteCartById(cart.skuId)">删除</a>
             <br />
             <a href="#none">移到收藏</a>
           </li>
@@ -40,16 +40,18 @@
     </div>
     <div class="cart-tool">
       <div class="select-all">
-        <input class="chooseAll" type="checkbox" :checked="isAllChecked" />
+        <input class="chooseAll" type="checkbox" :checked="isAllChecked && cartInfoList.length > 0" @change="updateAllCartChecked($event.target.checked)" :disabled="cartInfoList.length === 0" />
         <span>全选</span>
       </div>
       <div class="option">
-        <a href="#none">删除选中的商品</a>
+        <a href="javascript:void(0)" @click="deleteAllCheckedCart">删除选中的商品</a>
         <a href="#none">移到我的关注</a>
         <a href="#none">清除下柜商品</a>
       </div>
       <div class="money-box">
-        <div class="chosed">已选择 <span>0</span>件商品</div>
+        <div class="chosed">
+          已选择 <span>{{ selectedNum }}</span> 件商品
+        </div>
         <div class="sumprice">
           <em>总价（不含运费） ：</em>
           <i class="summoney">{{ totalPrice }}</i>
@@ -64,6 +66,8 @@
 
 <script>
 import { mapGetters } from 'vuex'
+// 引入 lodash 中的节流函数
+import throttle from 'lodash/throttle'
 export default {
   name: 'ShopCart',
   created() {
@@ -74,8 +78,8 @@ export default {
       // 获取个人购物车列表
       this.$store.dispatch('shopcart/getCartList')
     },
-    // 修改某一个产品的个数
-    async handler(type, disNum, cart) {
+    // 修改某一个产品的个数【节流】
+    handler: throttle(async function (type, disNum, cart) {
       // type:为了区分用户点击的是-按钮还是+按钮，或者是修改输入框中商品的数量
       // disNum:代表要向服务器带的参数  +变化量为（1）  -变化量为（-1）  input输入框：用户输入最终的个数（并不是变化量）
       // cart:哪一个产品【为了获取该产品的id】
@@ -112,6 +116,48 @@ export default {
       } catch (error) {
         alert('修改商品数量失败！')
       }
+    }, 500),
+    // 删除某一个产品
+    async deleteCartById(cartSkuId) {
+      try {
+        // 如果删除成功再次发起请求获取新的数据进行展示
+        await this.$store.dispatch('shopcart/deleteCartListBySkuId', cartSkuId)
+        this.getData()
+      } catch (error) {
+        alert(error.message)
+      }
+    },
+    // 修改某一个产品的勾选状态
+    async updateChecked(cartSkuId, checked) {
+      // 带给服务器的参数 isChecked 不是布尔值，应该是0|1
+      try {
+        // 如果修改数据成功，再次获取服务器数据（购物车）
+        const isChecked = checked ? 1 : 0
+        await this.$store.dispatch('shopcart/updateCheckedById', { skuId: cartSkuId, isChecked })
+        this.getData()
+      } catch (error) {
+        alert(error.message)
+      }
+    },
+    // 删除全部已勾选的产品（这个回调没办法收集到一些有用的数据）
+    async deleteAllCheckedCart() {
+      try {
+        await this.$store.dispatch('shopcart/deleteAllCheckedCart')
+        // 再次发请求获取购物车列表
+        this.getData()
+      } catch (error) {
+        alert(error.message)
+      }
+    },
+    // 修改全部产品的选中状态
+    async updateAllCartChecked(checked) {
+      try {
+        const isChecked = checked ? 1 : 0
+        await this.$store.dispatch('shopcart/updateAllCartChecked', isChecked)
+        this.getData()
+      } catch (error) {
+        alert(error.message)
+      }
     }
   },
   computed: {
@@ -133,6 +179,10 @@ export default {
       // arr.every:遍历数组里的元素，只要全部元素 isChecked 属性都为1 ===> true
       // 只要一个不为1 ===> false
       return this.cartInfoList.every(item => item.isChecked === 1)
+    },
+    // 已选择商品个数
+    selectedNum() {
+      return this.cartInfoList.filter(item => item.isChecked).length
     }
   }
 }

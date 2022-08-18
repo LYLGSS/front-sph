@@ -35,3 +35,19 @@ export const reqAddOrUpdateShopCart = (skuId, skuNum) => $http({ url: `/cart/add
 // 获取购物车列表数据
 // URL：/api/cart/cartList      请求方式：get
 export const reqCartList = () => $http({ url: '/cart/cartList', method: 'get' })
+
+// 删除购物车产品的接口
+// URL:/api/cart/deleteCart/{skuId}   method:delete
+export const reqDeleteCartById = (skuId) => $http({ url: `/cart/deleteCart/${skuId}`, method: 'delete' })
+
+// 修改购物车中商品的选中状态
+// URL:/api/cart/checkCart/{skuID}/{isChecked}    method：get
+export const reqUpdateCheckedById = (skuId, isChecked) => $http({ url: `/cart/checkCart/${skuId}/${isChecked}`, method: 'get' })
+
+// 获取验证码
+// URL：/api/user/passport/sendCode/{phone}   method:get
+export const reqGetCode = (phone) => $http({ url: `/user/passport/sendCode/${phone}`, method: 'get' })
+
+// 注册
+// URL:/api/user/passport/register   method:post   参数：phone  code  password
+export const reqUserRegister = (data) => $http({ url: '/user/passport/register', data, method: 'post' })
