@@ -7,7 +7,7 @@
     <Rank />
     <Like />
     <!-- Floor这个组件：自己在组件内部是没有发请求的，数据是父组件给的 -->
-    <Floor v-for="floor in floorList" :key="floor.id" :list="floor"/>
+    <Floor v-for="floor in floorList" :key="floor.id" :list="floor" />
     <Brand />
   </div>
 </template>

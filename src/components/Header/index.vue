@@ -6,15 +6,19 @@
       <div class="container">
         <div class="loginList">
           <p>尚品汇欢迎您！</p>
-          <p>
+          <p v-if="!userName">
             <span>请</span>
             <router-link to="/login">登录</router-link>
             <router-link to="/register" class="register">免费注册</router-link>
           </p>
+          <p v-else>
+            <a href="javascript:;">{{ userName }}</a>
+            <a href="javascript:;" class="register" @click="logout">退出登录</a>
+          </p>
         </div>
         <div class="typeList">
           <a href="###">我的订单</a>
-          <a href="###">我的购物车</a>
+          <a href="javascript:;" @click="myShopcart">我的购物车</a>
           <a href="###">我的尚品汇</a>
           <a href="###">尚品汇会员</a>
           <a href="###">企业采购</a>
@@ -63,6 +67,25 @@ export default {
         location.query = this.$route.query
       }
       this.$router.push(location)
+    },
+    // 退出登录
+    logout() {
+      try {
+        // 退出成功，跳转到首页（可以游客进行操作）
+        this.$store.dispatch('user/userLogout')
+        this.$router.push('/home')
+      } catch (error) {
+        alert(error.message)
+      }
+    },
+    // 跳转到购物车
+    myShopcart() {
+      this.$router.push('/shopcart')
+    }
+  },
+  computed: {
+    userName() {
+      return this.$store.state.user.userInfo.name
     }
   }
 }

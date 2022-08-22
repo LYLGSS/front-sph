@@ -51,3 +51,27 @@ export const reqGetCode = (phone) => $http({ url: `/user/passport/sendCode/${pho
 // 注册
 // URL:/api/user/passport/register   method:post   参数：phone  code  password
 export const reqUserRegister = (data) => $http({ url: '/user/passport/register', data, method: 'post' })
+
+// 登录
+// URL:/api/user/passport/login     method:post     参数：phone,password
+export const reqUserLogin = (data) => $http({ url: '/user/passport/login', data, method: 'post' })
+
+// 获取用户信息【需要带着用户的 token 向服务器要用户的信息】
+// URL:http://182.92.128.115/api/user/passport/auth/getUserInfo    method:get
+// 这里接口前的数字代表 token，由于已经在请求拦截器中将 token 添加到请求头中，所以这里不用再写
+export const reqUserInfo = () => $http({ url: '/user/passport/auth/getUserInfo', method: 'get' })
+
+// 退出登录
+// URL:/api/user/passport/logout    method:get
+export const reqLogout = () => $http({ url: '/user/passport/logout', method: 'get' })
+
+// 获取用户地址信息
+// URL:/api/user/userAddress/auth/findUserAddressList     method:get
+// export const reqAddressInfo = () => $http({ url: '/user/userAddress/auth/findUserAddressList', method: 'get' })
+// -----
+// mock 用户地址信息【这个接口只给老师的账号返回数据，老师的账号用的人太多，数据一直在变化，因此 mock 数据】
+export const reqAddressInfo = () => mockRequest.get('/userAdress')
+
+// 获取商品清单
+// URL:/api/order/auth/trade       method:get
+export const reqOrderInfo = () => $http({ url: '/order/auth/trade', method: 'get' })

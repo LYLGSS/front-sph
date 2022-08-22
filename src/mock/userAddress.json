@@ -1,0 +1,41 @@
+[{
+  "consignee": "刘逸龙",
+  "fullAddress": "河南省南阳市宛城区长江路80号南阳理工学院",
+  "id": 1,
+  "isDefault": "1",
+  "phoneNum": "13613822545",
+  "provinceId": 1,
+  "regionId": 1 ,
+  "userAddress": "南阳理工学院",
+  "userId": 1
+},{
+  "consignee": "张三",
+  "fullAddress": "南京市玄武区北京东路41号",
+  "id": 2,
+  "isDefault": "0",
+  "phoneNum": "13101085623",
+  "provinceId": 2,
+  "regionId": 2 ,
+  "userAddress": "南京市玄武区",
+  "userId": 2
+},{
+  "consignee": "李四",
+  "fullAddress": "江苏省南京市玄武区长江路333号",
+  "id": 3,
+  "isDefault": "0",
+  "phoneNum": "15101215018",
+  "provinceId": 3,
+  "regionId": 3 ,
+  "userAddress": "长江路333号",
+  "userId": 3
+},{
+  "consignee": "王五",
+  "fullAddress": "北京北京市昌平区北七家镇宏福苑南一区3号楼1单元211",
+  "id": 4,
+  "isDefault": "0",
+  "phoneNum": "18105625318",
+  "provinceId": 4,
+  "regionId": 4 ,
+  "userAddress": "3号楼1单元211",
+  "userId": 4
+}]

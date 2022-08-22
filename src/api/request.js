@@ -19,7 +19,13 @@ const requests = axios.create({
 // 请求拦截器，在发请求之前，请求拦截器可以检测到，可以在请求发出去整之前做一些事情
 requests.interceptors.request.use((config) => {
   // config 配置对象里面有一个属性很重要：headers 请求头
+
+  // 有token，需要携带 token 给服务器【注意：这里有 token 时，将游客的 uuid 也带上了，让游客加购的产品，在登录后，进行合并】
+  if (store.state.user.token) {
+    config.headers.token = store.state.user.token
+  }
   if (store.state.detail.uuid_token) {
+    // 没有 token（游客）
     // 向请求头中添加一个字段（userTempId）:和后端老师商量好的，不可更改
     config.headers.userTempId = store.state.detail.uuid_token
   }

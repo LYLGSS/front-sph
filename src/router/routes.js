@@ -6,11 +6,17 @@ import Search from '@/views/Search/index.vue'
 import Detail from '@/views/Detail/index.vue'
 import AddCartSccess from '@/views/AddCartSuccess/index.vue'
 import ShopCart from '@/views/ShopCart/index.vue'
+import Trade from '@/views/Trade/index.vue'
 
 export default [
   {
     path: '/',
     redirect: '/home'
+  },
+  {
+    path: '/trade',
+    component: Trade,
+    meta: { showDetail: true }
   },
   {
     path: '/shopcart',

@@ -2,6 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 // 引入路由的配置模块
 import routes from '@/router/routes.js'
+// 引入 store
+import store from '@/store/index.js'
 
 Vue.use(VueRouter)
 
@@ -47,6 +49,42 @@ const router = new VueRouter({
   scrollBehavior(to, from, savedPosition) {
     // 始终滚动到顶部
     return { y: 0 }
+  }
+})
+// 全局前置守卫
+router.beforeEach(async(to, from, next) => {
+  // 用户登录了，才会有 token，未登录一定不会有
+  // 获取仓库中的token-----可以确定用户是登录了
+  const token = store.state.user.token
+  const name = store.state.user.userInfo.name
+  // 用户已经登陆
+  if (token) {
+    // 用户已经登陆，禁止前往 login 界面【停留在 home 首页】
+    if (to.path === '/login') {
+      next('/home')
+    } else {
+      // 登陆了，去的不是 login【去的是 home|search|detail|shopcart】
+      // 如果用户名已有
+      if (name) {
+        next()
+      } else {
+        // 没有用户信息，派发 action 让仓库存储用户信息再跳转【为了让页面左上角显示登录的用户名】
+        try {
+          // 获取用户信息成功，放行
+          await store.dispatch('user/getUserInfo')
+          next()
+        } catch (error) {
+          // 由于 token 失效，获取不到用户信息，需要重新登录
+          // 清除失效的 token
+          await store.dispatch('user/userLogout')
+          // 回到登录页
+          next('/login')
+        }
+      }
+    }
+  } else {
+    // 未登录，放行（未登录再试没有处理完毕，后期再处理）
+    next()
   }
 })
 
