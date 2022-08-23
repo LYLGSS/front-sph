@@ -7,11 +7,23 @@ import Detail from '@/views/Detail/index.vue'
 import AddCartSccess from '@/views/AddCartSuccess/index.vue'
 import ShopCart from '@/views/ShopCart/index.vue'
 import Trade from '@/views/Trade/index.vue'
+import Pay from '@/views/Pay/index.vue'
+import PaySuccess from '@/views/PaySuccess/index.vue'
 
 export default [
   {
     path: '/',
     redirect: '/home'
+  },
+  {
+    path: '/paysuccess',
+    component: PaySuccess,
+    meta: { showDetail: true }
+  },
+  {
+    path: '/pay',
+    component: Pay,
+    meta: { showDetail: true }
   },
   {
     path: '/trade',

@@ -11,7 +11,6 @@ const actions = {
     const res = await reqAddressInfo()
     if (res.code === 200) {
       context.commit('GETUSERADDRESS', res.data)
-      console.log(res.data)
     }
   },
   // 获取商品清单数据
