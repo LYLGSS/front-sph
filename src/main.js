@@ -16,7 +16,18 @@ import Pagination from '@/components/Pagination/index.vue'
 // 全部引入接口 api 文件夹里面全部请求函数
 import * as API from '@/api/index.js'
 import { Button, MessageBox } from 'element-ui'
+// 引入图片懒加载插件
+import VueLazyload from 'vue-lazyload'
+// 引入 loading 动态图片
+import loadingImg from '@/assets/images/loading.gif'
+// 引入 vee-validate 表单验证插件
+import '@/plugins/validate.js'
+
 Vue.use(Button)
+Vue.use(VueLazyload, {
+  // 懒加载默认的图片
+  loading: loadingImg
+})
 
 Vue.config.productionTip = false
 // 注册全局组件

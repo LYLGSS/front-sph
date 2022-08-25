@@ -17,7 +17,7 @@
           </p>
         </div>
         <div class="typeList">
-          <a href="###">我的订单</a>
+          <a href="javascript:;" @click="myorder">我的订单</a>
           <a href="javascript:;" @click="myShopcart">我的购物车</a>
           <a href="###">我的尚品汇</a>
           <a href="###">尚品汇会员</a>
@@ -81,6 +81,10 @@ export default {
     // 跳转到购物车
     myShopcart() {
       this.$router.push('/shopcart')
+    },
+    // 跳转到我的订单界面
+    myorder() {
+      this.$router.push('/center')
     }
   },
   computed: {

@@ -83,8 +83,15 @@ router.beforeEach(async(to, from, next) => {
       }
     }
   } else {
-    // 未登录，放行（未登录再试没有处理完毕，后期再处理）
-    next()
+    // 未登录，不能去交易相关界面、不能去支付相关界面【pay|paysuccess】、不能去个人中心查看我的订单
+    // 将未登录不能去的路由合并为一个数组
+    const toPathArr = ['/trade', '/pay', '/paysuccess', '/center/myorder', '/center/grouporder']
+    if (toPathArr.includes(to.path)) {
+      // 把未登录的时候想去而没有去成的路由信息，存储到地址栏中【路由】
+      next(`/login?redirect=${to.path}`)
+    } else {
+      next()
+    }
   }
 })
 

@@ -16,12 +16,14 @@
           <div class="content">
             <form>
               <div class="input-text clearFix">
-                <span></span>
-                <input type="text" placeholder="邮箱/用户名/手机号" v-model="phone" />
+                <span class="phone"></span>
+                <input placeholder="请输入手机号" v-model="phone" name="phone" v-validate="{ required: true, regex: /^1\d{10}$/ }" :class="{ invalid: errors.has('phone') }" />
+                <div class="error-msg">{{ errors.first('phone') }}</div>
               </div>
               <div class="input-text clearFix">
                 <span class="pwd"></span>
-                <input type="password" placeholder="请输入密码" v-model="password" />
+                <input placeholder="请输入密码" v-model="password" name="password" v-validate="{ required: true, regex: /^[0-9A-Za-z]{6,20}$/ }" :class="{ invalid: errors.has('password') }" />
+                <div class="error-msg">{{ errors.first('password') }}</div>
               </div>
               <div class="setting clearFix">
                 <label class="checkbox inline">
@@ -79,12 +81,20 @@ export default {
     // 登录的回调函数
     async userLogin() {
       const { phone, password } = this
-      try {
-        phone && password && (await this.$store.dispatch('user/userLogin', { phone, password }))
-        // 跳转到 home 首页
-        this.$router.push('/home')
-      } catch (error) {
-        alert('登录失败！')
+
+      // 获取 vee-validate 表单验证是否全部验证通过
+      const success = await this.$validator.validateAll()
+      // 全部表单验证成功，在向服务器发请求，进行登录
+      // 只要有一个表单没有成功，不会发请求
+      if (success) {
+        try {
+          phone && password && (await this.$store.dispatch('user/userLogin', { phone, password }))
+          // 登录的路由组件：看路由中是否包含 query 参数，有：跳转到 query 参数指定的路由，没有：跳转到home
+          const toPath = this.$route.query.redirect || '/home'
+          this.$router.push(toPath)
+        } catch (error) {
+          alert('登录失败！')
+        }
       }
     }
   }
@@ -162,13 +172,14 @@ export default {
               width: 37px;
               height: 32px;
               border: 1px solid #ccc;
-              background: url(../../assets/images/icons.png) no-repeat -10px -201px;
               box-sizing: border-box;
               border-radius: 2px 0 0 2px;
             }
-
+            .phone {
+              background: url(../../assets/images/icons.png) no-repeat -10px -201px;
+            }
             .pwd {
-              background-position: -72px -201px;
+              background: url(../../assets/images/icons.png) no-repeat -72px -201px;
             }
 
             input {
@@ -187,6 +198,12 @@ export default {
 
               border-radius: 0 2px 2px 0;
               outline: none;
+            }
+            .error-msg {
+              width: 84px;
+              height: 16px;
+              margin-left: 38px;
+              color: red;
             }
           }
 

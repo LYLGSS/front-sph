@@ -87,3 +87,7 @@ export const reqPayInfo = (orderId) => $http({ url: `/payment/weixin/createNativ
 // 获取支付订单状态
 // URL:/api/payment/weixin/queryPayStatus/{orderId}     method:get
 export const reqPayStatus = (orderId) => $http({ url: `/payment/weixin/queryPayStatus/${orderId}`, method: 'get' })
+
+// 获取我的订单列表
+// URL:/api/order/auth/{page}/{limit}   method:get
+export const reqMyOrderList = (page, limit) => $http({ url: `/order/auth/${page}/${limit}`, method: 'get' })

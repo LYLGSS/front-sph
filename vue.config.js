@@ -15,5 +15,7 @@ module.exports = defineConfig({
     }
   },
   // 关闭 eslint
-  lintOnSave: false
+  lintOnSave: false,
+  // 打包项目时，不生成 .map 文件
+  productionSourceMap: false
 })
