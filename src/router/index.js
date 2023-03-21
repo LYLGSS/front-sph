@@ -7,6 +7,9 @@ import store from '@/store/index.js'
 
 Vue.use(VueRouter)
 
+// 导航重复跳转报错
+// 原因：Vue Router将路由记录在一个历史堆栈中。每次进行导航时，它会向历史堆栈中添加一条记录，用于记录当前的路由状态。如果你尝试导航到一个已经存在于历史堆栈中的路由，则会触发 NavigationDuplicated 错误。编程式导航会出现以上问题，声明式导航不会，因为声明式导航在底层已经处理好了这个问题
+
 // 1、先把VueRouter原型对象的push，保存一份
 const originPush = VueRouter.prototype.push
 const originReplace = VueRouter.prototype.replace
@@ -18,29 +21,13 @@ call || apply 的区别
   相同点：都可以调用函数一次，都可以篡改函数的上下文一次
   不同点：call 与 apply 传递参数：call 传递参数用逗号隔开 ，apply 方法传递数组
 */
-VueRouter.prototype.push = function(location, resolve, reject) {
-  if (resolve && reject) {
-    originPush.call(this, location, resolve, reject)
-  } else {
-    originPush.call(
-      this,
-      location,
-      () => {},
-      () => {}
-    )
-  }
+VueRouter.prototype.push = function (location, resolve, reject) {
+  const nullFunction = () => {}
+  originPush.call(this, location, resolve || nullFunction, reject || nullFunction)
 }
 VueRouter.prototype.replace = (location, resolve, reject) => {
-  if (resolve && reject) {
-    originReplace.call(this, location, resolve, reject)
-  } else {
-    originReplace.call(
-      this,
-      location,
-      () => {},
-      () => {}
-    )
-  }
+  const nullFunction = () => {}
+  originReplace.call(this, location, resolve || nullFunction, reject || nullFunction)
 }
 
 const router = new VueRouter({
@@ -52,7 +39,7 @@ const router = new VueRouter({
   }
 })
 // 全局前置守卫
-router.beforeEach(async(to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   // 用户登录了，才会有 token，未登录一定不会有
   // 获取仓库中的token-----可以确定用户是登录了
   const token = store.state.user.token

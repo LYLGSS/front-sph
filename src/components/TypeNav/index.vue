@@ -31,7 +31,6 @@
             </div>
           </div>
         </transition>
-
       </div>
       <nav class="nav">
         <a href="###">服装城</a>
@@ -72,9 +71,9 @@ export default {
     ...mapState('home', ['categroyList'])
   },
   methods: {
-    changeIndex: throttle(function(index) {
+    changeIndex: throttle(function (index) {
       /*
-        index:鼠标移上耨一个一级分类的元素的索引值
+        index:鼠标移上某一个一级分类的元素的索引值
         正常情况（用户慢慢的移动鼠标）：鼠标移入，每一个一级分类 h3，都会触发鼠标进入的事件
         非正常情况（用户移动鼠标很快）：本身全部的一级分类都应该触发鼠标进入的事件，但是经过测试，只有部分 h3 触发了
         就是由于用户行为过快，导致浏览器反应不过来。如果当前回调函数中有一些大量的业务，有可能出现卡顿现象
@@ -238,30 +237,31 @@ export default {
           }
         }
         .cur {
-          background-color: rgb(217,217,217);
+          background-color: rgb(217, 217, 217);
         }
       }
     }
 
     // 进入的起点、离开的终点
-    .sort-enter,.sort-leave-to{
-      height: 0px;
-    }
-    // 进入的终点、离开的起点
-    .sort-enter-to,.sort-leave{
-      height: 461px;
-    }
+    // .sort-enter,.sort-leave-to{
+    //   height: 0px;
+    // }
+    // // 进入的终点、离开的起点
+    // .sort-enter-to,.sort-leave{
+    //   height: 461px;
+    // }
     // 启用动画
-    .sort-enter-active{
-      animation: showList .3s linear;
+    .sort-enter-active {
+      animation: showList 0.3s linear;
+      // transition: height 0.3s linear;
       overflow: hidden;
     }
     // 动画
     @keyframes showList {
-      from{
+      from {
         height: 0px;
       }
-      to{
+      to {
         height: 416px;
       }
     }
